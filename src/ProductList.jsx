@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from './CartSlice'; // Import Redux action
 import './ProductList.css';
 import CartItem from './CartItem';
 
 function ProductList() {
     const [showCart, setShowCart] = useState(false);
-    const [addedToCart, setAddedToCart] = useState({}); // Track items in the cart
-    const dispatch = useDispatch(); // Redux dispatch
+    const cartItems = useSelector(state => state.cart.items);
+    const dispatch = useDispatch();
 
     const plantsArray = [
         {
@@ -19,20 +19,15 @@ function ProductList() {
         }
     ];
 
-    // Function to handle adding items to the cart
     const handleAddToCart = (plant) => {
-        dispatch(addItem(plant)); // Add item to Redux store
-        setAddedToCart((prevState) => ({
-            ...prevState,
-            [plant.name]: true // Mark plant as added
-        }));
+        dispatch(addItem(plant));
     };
 
     return (
         <div>
             <div className="navbar">
                 <h1>Paradise Nursery</h1>
-                <button onClick={() => setShowCart(!showCart)}>🛒 Cart</button>
+                <button onClick={() => setShowCart(!showCart)}>🛒 Cart ({cartItems.length})</button>
             </div>
 
             {!showCart ? (
@@ -50,9 +45,9 @@ function ProductList() {
                                         <button
                                             className="add-to-cart-btn"
                                             onClick={() => handleAddToCart(plant)}
-                                            disabled={addedToCart[plant.name]} // Disable if already added
+                                            disabled={cartItems.some(item => item.name === plant.name)}
                                         >
-                                            {addedToCart[plant.name] ? "Added" : "Add to Cart"}
+                                            {cartItems.some(item => item.name === plant.name) ? "Added" : "Add to Cart"}
                                         </button>
                                     </div>
                                 ))}
@@ -61,7 +56,7 @@ function ProductList() {
                     ))}
                 </div>
             ) : (
-                <CartItem />
+                <CartItem onContinueShopping={() => setShowCart(false)} />
             )}
         </div>
     );
