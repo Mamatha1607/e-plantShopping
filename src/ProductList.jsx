@@ -23,11 +23,14 @@ function ProductList() {
         dispatch(addItem(plant));
     };
 
+    // ✅ Count total number of items in the cart
+    const totalCartItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+
     return (
         <div>
             <div className="navbar">
                 <h1>Paradise Nursery</h1>
-                <button onClick={() => setShowCart(!showCart)}>🛒 Cart ({cartItems.length})</button>
+                <button onClick={() => setShowCart(!showCart)}>🛒 Cart ({totalCartItems})</button>
             </div>
 
             {!showCart ? (
